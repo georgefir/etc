@@ -1,0 +1,237 @@
+﻿===Nginx 常用查詢access log
+
+查看access.log 裡面gz檔 
+zcat /opt/logs/nginx/001-500vip-APP-01-6006.access.log-2018-01-11.gz | awk '{print $13}' | sort | uniq -c | sort -r
+
+查看訪問最頻繁的前10名IP
+awk '{print $3}' /opt/logs/nginx/*.access.log  | cut -d "=" -f 2 | sort -n |uniq -c | sort -rn | head -n 10
+
+查看用戶訪問路徑
+grep '117.136.46.47' /opt/logs/nginx/*.access.log |awk '{print $6}'|sort |uniq -c |sort -rn
+
+2018/10/31 update過濾我方IP
+cat /opt/logs/nginx/*error.log | grep -v "220.130.140.50\|220.130.140.51\|218.210.99.16\|61.216.144.186\|61.216.144.184\|122.147.214.16\|35.194.220.214\|23.98.41.87\|104.199.189.61\|23.97.68.192\|58.218.198.140\|121.120.42.16\|121.201.126.154\|121.31.40.102\|121.18.238.84\|218.85.133.196\|122.228.244.207\|123.249.34.189\|222.88.94.206\|117.21.191.101\|119.90.126.103\|124.232.137.43\|118.123.243.214\|27.221.52.39\|221.181.73.38\|60.169.77.189\|59.47.71.99\|202.111.175.61\|219.153.49.198\|219.138.135.102\|125.211.218.83\|111.161.65.109\|117.34.109.53\|221.204.213.252\|59.47.71.99\|121.201.42.16" | grep status=200
+
+
+2018/10/31 :update過濾我方ip後統計
+cat /opt/logs/nginx/*error.log | grep -v "220.130.140.50\|220.130.140.51\|218.210.99.16\|61.216.144.186\|61.216.144.184\|122.147.214.16\|35.194.220.214\|23.98.41.87\|104.199.189.61\|23.97.68.192\|58.218.198.140\|121.120.42.16\|121.201.126.154\|121.31.40.102\|121.18.238.84\|218.85.133.196\|122.228.244.207\|123.249.34.189\|222.88.94.206\|117.21.191.101\|119.90.126.103\|124.232.137.43\|118.123.243.214\|27.221.52.39\|221.181.73.38\|60.169.77.189\|59.47.71.99\|202.111.175.61\|219.153.49.198\|219.138.135.102\|125.211.218.83\|111.161.65.109\|117.34.109.53\|221.204.213.252\|59.47.71.99\|121.201.42.16" | awk '{print $ 3}' | sort -n | uniq -c
+
+2018/10/31:update過濾我方iptables
+cat /etc/sysconfig/iptables | grep -oE "\b([0-9]{1,3}\.){3}[0-9]{1,3}-([0-9]{1,3}\.){3}[0-9]{1,3}|([0-9]{1,3}\.){3}[0-9]{1,3}\b" | grep -v  "220.130.140.50\|220.130.140.51\|218.210.99.16\|61.216.144.186\|61.216.144.184\|122.147.214.16\|35.194.220.214\|23.98.41.87\|104.199.189.61\|23.97.68.192\|58.218.198.140\|121.120.42.16\|121.201.126.154\|121.31.40.102\|121.18.238.84\|218.85.133.196\|122.228.244.207\|123.249.34.189\|222.88.94.206\|117.21.191.101\|119.90.126.103\|124.232.137.43\|118.123.243.214\|27.221.52.39\|221.181.73.38\|60.169.77.189\|59.47.71.99\|202.111.175.61\|219.153.49.198\|219.138.135.102\|125.211.218.83\|111.161.65.109\|117.34.109.53\|221.204.213.252\|59.47.71.99\|121.201.42.16" | sort -n
+
+
+辦公室+馬尼拉辦公室+VPS_montir0407
+"35.194.220.214\|203.177.179.69\|203.177.171.98\|112.199.32.122\|220.128.155.46\|220.128.155.46\|45.125.216.50\|61.38.186.127\|101.250.10.176\|116.50.140.80\|220.130.140.50\|220.130.140.51\|218.210.99.16\|61.216.144.186\|61.216.144.184\|122.147.214.16\|104.199.189.61\|23.97.68.192\|58.218.198.140\|121.120.42.16\|121.201.126.154\|121.31.40.102\|121.18.238.84\|218.85.133.196\|122.228.244.207\|123.249.34.189\|222.88.94.206\|117.21.191.101\|119.90.126.103\|124.232.137.43\|118.123.243.214\|27.221.52.39\|221.181.73.38\|60.169.77.189\|59.47.71.99\|202.111.175.61\|219.153.49.198\|121.22.248.100\|125.211.218.87\|60.28.24.175\|117.34.109.53\|221.204.213.252\|59.47.71.99\|112.199.32.122\|203.177.171.98\|203.177.179.69"
+
+辦公室+馬尼拉辦公室+VPS_montir0527
+"35.194.220.214 \|203.177.179.69 \|203.177.171.98 \|112.199.32.122 \|220.128.155.46 \|45.125.216.50 \|61.38.186.127 \|101.250.10.176 \|116.50.140.80 \|61.216.144.183 \|220.130.140.50 \|220.130.140.51 \|218.210.99.16 \|61.216.144.186 \|61.216.144.184 \|220.128.155.51 \|122.147.214.16 \|104.199.189.61 \|23.97.68.192 \|121.120.42.16 \|121.31.40.102 \|121.18.238.84 \|218.85.133.160 \|122.228.244.207 \|123.249.34.189 \|222.88.94.206 \|117.21.191.101 \|119.90.126.103 \|124.232.137.43 \|118.123.243.214 \|221.181.73.38 \|60.169.77.189 \|139.215.199.182 \|219.153.49.198 \|121.22.248.100 \|125.211.218.87 \|60.28.24.175 \|117.34.109.53 \|221.204.213.252 \|58.218.92.119 \|121.201.42.16 \|119.167.151.103 \|150.138.143.84 \|42.7.27.156\|Do Not Remove"
+
+馬尼拉辦公室的IP
+112.199.32.122/32
+203.177.171.98/32
+203.177.179.69/32
+
+
+===tar 解壓
+tar xvf FileName.tar -C /
+===看tar內容不解壓
+tar tvf  
+nginx -t -v
+=== services enabled檢查
+ systemctl list-unit-files
+====netstat 查詢
+netstat -nlp    //系統開哪些port
+netstat -lptu  //系統程式佔用port
+netstat -tulpn
+netstat -anp | grep zabbix
+===Curl
+
+
+curl -A "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.0)"  https://www.hck666.com -v -k
+curl --header "X-Forwarded-For: 58.218.198.140" -A "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.0)" http://d31.fpwdh3421.com:6001 -v
+curl --header "X-Forwarded-For: 58.218.198.140" -A "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.0)" https://XX..com -v
+
+
+===常用快速鍵 xshell================
+
+llconf
+cd /opt/APP/openresty/nginx/conf/vhost/ ; ls -lrt
+
+cat_後端
+ls -lrt /opt/APP/openresty/nginx/conf/vhost/*conf ; cat /opt/APP/openresty/nginx/conf/vhost/*conf | grep -v "ssl_prefer_\|server_name\|server {" | grep server
+
+cat_server_name
+ls -lrt /opt/APP/openresty/nginx/conf/vhost/*conf ; cat /opt/APP/openresty/nginx/conf/vhost/*conf | grep -v "server_name  _;" | grep server_name
+
+nginx -t
+
+Log_Status
+tail -f /opt/logs/nginx/*access.log | grep status=
+
+Log_Request
+tail -f /opt/logs/nginx/*access.log | grep request_time=
+
+AcdessTOP10
+awk '{print $3}' /opt/logs/nginx/*.access.log  | cut -d "=" -f 2 | sort -n |uniq -c | sort -rn | head -n 10
+
+status統計
+awk '{print $9}' /opt/logs/nginx/*.access.log | sort | uniq -c | sort -r
+
+rm -rf /root/apisLogin_access.txt ; zcat /opt/logs/nginx/*.access.log-2019-04-16.gz | grep apis/login | awk '{print $3}'  | sort -n |uniq -c |awk '{if($1 >100) print $0}'|sort -rn  >> /root/apisLogin_access.txt
+
+SYN數
+netstat -n -p | grep SYN_REC | sort -u
+
+SYN統計
+netstat -n -p | grep SYN_REC | wc -l
+
+連線數
+netstat -ntu | awk '{print $5}' | cut -d: -f1 | sort | uniq -c | sort -n
+
+dns dig
+dig @8.8.8.8 +trace d11.saeh9jaix.com +trace
+
+
+
+==============splnk查詢二級指向一級域名 cname
+
+index=syslog host="*" domain="*" 
+| search cname=cdn* 
+| table Hostname domain cname date days
+
+
+
+
+===綁定iptables
+-A INPUT -s 8.8.8.8/32 -p tcp -m multiport --dports 443,80 -m comment --comment "20181122 Bot u
+
+ Apply" -j ACCEPT
+iptables -L -n | grep
+臨時性iptables
+iptables -I INPUT -s 8.8.8.8 -p tcp -m multiport --dports 443,80 -j ACCEPT  ///iptables 暫時443.80增加ip
+
+iptables -I INPUT -p tcp -m iprange --src-range 333.200.209.250-333.200.209.254 -m multiport --dports 80,443 -j ACCEPT   ///加80.443白名單 網段
+
+iptables -A INPUT -p tcp 8.8.8.8 -m multiport --dports 443,80 -j DROP  ///iptables擋443;80
+
+====刪除iptables====
+iptables -D INPUT 1
+
+##清除所有 
+iptables -F 刪除所有的規則
+iptables -X 刪除指定的規則鏈(chain)
+
+====IP的網路流量DROP====
+阻擋
+iptables -A INPUT -s 8.8.8.8/32 -j DROP
+iptables -A INPUT -s 39.104.50.107/32 -j DROP
+解綁
+iptables -D INPUT -s 8.8.8.8/32 -j DROP
+
+====被攻擊查看
+target     prot opt source               destination         
+LOG        udp  --  0.0.0.0/0            0.0.0.0/0            limit: avg 5/sec burst 5 LOG flags 0 level 4
+DROP       udp  --  0.0.0.0/0            0.0.0.0/0            udp dpt:30000 limit: avg 1/sec burst 2
+
+===linux 系統log查詢
+
+cat /var/log/messages
+
+cat /opt/logs/nginx/*ssl*access.log | grep status=4 | awk '{print $9 , $3}' | sort | uniq -c | sort -n
+cat /opt/logs/nginx/*.log | grep status=4 | awk '{print $9 , $3}' | sort | uniq -c | sort -n
+
+
+================常用維護指令
+app開始維護>>> 先上傳wh.dat，修改wget 後在使用
+cd /opt/APP/openresty/nginx/conf/lua_Script/APP ; wget https://raw.githubusercontent.com/ryanlin777/linux-/master/wh.dat ; ls -lrt /opt/APP/openresty/nginx/conf/lua_Script/APP/ ; sleep 2s ;sed -i 's/set\ \$AppMaintainMode\ 0/\set\ \$AppMaintainMode\ 1/g' /opt/APP/openresty/nginx/conf/vhost/*.conf ; sed -i 's/set\ \$AppMaintainLog\ 0/\set\ \$AppMaintainLog\ 1/g' /opt/APP/openresty/nginx/conf/vhost/*.conf ; cat /opt/APP/openresty/nginx/conf/vhost/*conf | grep "AppMaintainLog\|AppMaintainMode" ; nginx -t
+
+systemctl  restart nginx ; cat /opt/APP/openresty/nginx/conf/vhost/*conf | grep "AppMaintainLog\|AppMaintainMode"
+
+app結束維護ma
+rm -rf /opt/APP/openresty/nginx/conf/lua_Script/APP/wh.dat ; sleep 2s ; sed -i 's/set\ \$AppMaintainMode\ 1/\set\ \$AppMaintainMode\ 0/g' /opt/APP/openresty/nginx/conf/vhost/*.conf ; sed -i 's/set\ \$AppMaintainLog\ 1/\set\ \$AppMaintainLog\ 0/g' /opt/APP/openresty/nginx/conf/vhost/*.conf ; sleep 2s ; nginx -t ; cat /opt/APP/openresty/nginx/conf/vhost/*conf | grep "AppMaintainLog\|AppMaintainMode"
+
+systemctl restart nginx ; cat /opt/APP/openresty/nginx/conf/vhost/*conf | grep "AppMaintainLog\|AppMaintainMode" ; ls -lrt /opt/APP/openresty/nginx/conf/lua_Script/APP/ ; service nginx status
+
+
+FE開始ma
+先修改頁面 cd /opt/Htdocs/service 
+
+sed -i 's/^\s*set $MAM 0/\    set $MAM 1/g'  /opt/APP/openresty/nginx/conf/vhost/*.conf ; nginx -t 
+
+systemctl restart nginx ; cat /opt/APP/openresty/nginx/conf/vhost/*.conf | grep MAM 
+
+
+FE結束ma
+
+#FE維謢模式 維護開始 將『  1  』切為『  0  』
+sed -i 's/^\s*set $MAM 1/\    set $MAM 0/g'  /opt/APP/openresty/nginx/conf/vhost/*.conf ; nginx -t ; cat /opt/APP/openresty/nginx/conf/vhost/*.conf | grep MAM 
+
+systemctl restart nginx ; cat /opt/APP/openresty/nginx/conf/vhost/*.conf | grep MAM 
+
+
+#nginx.conf後端修改 
+
+sed -i 's/#server 23.101.11.130/server 23.101.11.130/g'  /opt/APP/openresty/nginx/conf/vhost/*.conf ; nginx -t ;
+
+###salt sed 後端##server 35.201.200.93
+
+salt "053*app*23" cmd.run 'cat /opt/APP/openresty/nginx/conf/vhost/*conf' | grep -v "ssl_prefer_\|server_name\|server {" | grep server
+salt "053*app*23" cmd.run "sed -i 's/server 35.201.200.93/#server 35.201.200.93/g'   /opt/APP/openresty/nginx/conf/vhost/*.conf"
+salt "053*app*23" cmd.run 'cat /opt/APP/openresty/nginx/conf/vhost/*conf' | grep -v "ssl_prefer_\|server_name\|server {" | grep server
+salt "053*app*23" cmd.run "/opt/APP/openresty/nginx/sbin/nginx -t"
+salt "053*app*23" cmd.run "systemctl reload nginx"
+salt fe-test* cmd.run "sed -i 's/set\ \$MAM 0/\set\ \$MAM 1/g'  /opt/APP/openresty/nginx/conf/vhost/*.conf  && cat /opt/APP/openresty/nginx/conf/vhost/*.conf | grep MAM &&  /opt/APP/openresty/nginx/sbin/nginx -t"
+
+測試
+salt-key
+salt fe-test-001 test.ping
+salt fe-test-001 cmd.run "sed -i 's/02/01/g' /root/test/test.sh"
+
+===30-54系統check后端服务====================
+fe url/apis/healthCheck
+be url/apis/healthCheck
+app url:10000/apis/healthCheck
+pay url:30000/info
+==check 2rp.3rp路径=========================
+2rp BE.FE.PAY  url:Port/secrphccheck
+2rp APP        upstream_IP:Port/xapicheck
+3rp            upstream_IP:Port/thirdrphccheck
+
+
+===APM Montir
+各級反代監測群組  SG030    HK042
+1RP to 2RP 
+APP        :	upstream_IP:Port  /xapicheck
+BE.FE.PAY  :	upstream_IP:Port  /secrphccheck
+
+1RP to 3RP 
+APP        :	upstream_IP:Port  /thirdrphccheck
+BE.FE.PAY  :	upstream_IP:Port  /thirdrphccheck
+
+
+服務監測 1RP VIP to HC  
+PAY        :	upstream_IP:Port  /info               APM:VIP
+FE.BE.APP  :	upstream_IP:Port  /apis/healthCheck   APM:VIP
+BE.        :    upstream_IP:Port  /appauth/info       zabbix monitor
+
+
+===
+
+SG Test 
+VPS 030 GCP TO HC-SG
+httping d13.gahto3soo.com:10000/apis/healthCheck -i 2 -s
+VPS 030 Azure TO HC-SG
+httping d23.gahto3soo.com:10000/apis/healthCheck -i 2 -s
+
+Hk Test
+VPS 054 GCP TO HC-HK
+httping d12.uvee4pier.com:10000/apis/healthCheck -i 2 -s
+VPS 054 Azure TO HC-HK
+httping d23.uvee4pier.com:10000/apis/healthCheck -i 2 -s
+
+3RP Test
+gcp to 3rp
+httping d12.gahto3soo.com:10000/thirdrphccheck -i 2 -s -Y
+Azure to 3rp
+httping d23.gahto3soo.com:10000/thirdrphccheck -i 2 -s -Y
+
